@@ -1,20 +1,19 @@
 package com.example.ahorroplus.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.border
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -24,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.ahorroplus.data.model.Categoria
 import com.example.ahorroplus.ui.viewmodel.CategoriaViewModel
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,204 +51,200 @@ fun CategoriesScreen(
             )
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Formulario para agregar categoría
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text(
-                        text = "Nueva Categoría",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    OutlinedTextField(
-                        value = nombre,
-                        onValueChange = { viewModel.setNombre(it) },
-                        label = { Text("Nombre") },
-                        leadingIcon = { Icon(Icons.Default.Label, contentDescription = null) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
-                    )
-
-                    // Selección de Icono
-                    Text(
-                        text = "Selecciona un Icono",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(5),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.height(200.dp)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(iconosDisponibles) { icono ->
-                            IconButton(
-                                onClick = { viewModel.setIcono(icono.first) },
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .background(
-                                        if (iconoSeleccionado == icono.first) {
-                                            MaterialTheme.colorScheme.primaryContainer
+                        Text(
+                            text = "Nueva Categoría",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        OutlinedTextField(
+                            value = nombre,
+                            onValueChange = { viewModel.setNombre(it) },
+                            label = { Text("Nombre") },
+                            leadingIcon = { Icon(Icons.Default.Label, contentDescription = null) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true
+                        )
+
+                        Text(
+                            text = "Selecciona un Icono",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(5),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
+                        ) {
+                            items(iconosDisponibles) { icono ->
+                                IconButton(
+                                    onClick = { viewModel.setIcono(icono.first) },
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .background(
+                                            if (iconoSeleccionado == icono.first) {
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            } else {
+                                                Color.Transparent
+                                            },
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                ) {
+                                    Icon(
+                                        icono.second,
+                                        contentDescription = icono.first,
+                                        tint = if (iconoSeleccionado == icono.first) {
+                                            MaterialTheme.colorScheme.onPrimaryContainer
                                         } else {
-                                            Color.Transparent
-                                        },
-                                        RoundedCornerShape(8.dp)
+                                            MaterialTheme.colorScheme.onSurface
+                                        }
                                     )
+                                }
+                            }
+                        }
+
+                        Text(
+                            text = "Selecciona un Color",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(6),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier
+                                .height(140.dp)
+                                .fillMaxWidth()
+                        ) {
+                            items(coloresDisponibles) { colorPair ->
+                                val (nombreColor, color) = colorPair
+                                Box(
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .background(color, RoundedCornerShape(8.dp))
+                                        .then(
+                                            if (colorSeleccionado == nombreColor) {
+                                                Modifier.border(
+                                                    3.dp,
+                                                    MaterialTheme.colorScheme.primary,
+                                                    RoundedCornerShape(8.dp)
+                                                )
+                                            } else Modifier
+                                        )
+                                        .clickable { viewModel.setColor(nombreColor) },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (colorSeleccionado == nombreColor) {
+                                        Icon(
+                                            Icons.Default.Check,
+                                            contentDescription = null,
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        mensaje?.let {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (it.contains("exitosamente")) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        MaterialTheme.colorScheme.errorContainer
+                                    }
+                                )
                             ) {
-                                Icon(
-                                    icono.second,
-                                    contentDescription = icono.first,
-                                    tint = if (iconoSeleccionado == icono.first) {
+                                Text(
+                                    text = it,
+                                    modifier = Modifier.padding(16.dp),
+                                    color = if (it.contains("exitosamente")) {
                                         MaterialTheme.colorScheme.onPrimaryContainer
                                     } else {
-                                        MaterialTheme.colorScheme.onSurface
+                                        MaterialTheme.colorScheme.onErrorContainer
                                     }
                                 )
                             }
                         }
-                    }
 
-                    // Selección de Color
-                    Text(
-                        text = "Selecciona un Color",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(6),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.height(100.dp)
-                    ) {
-                        items(coloresDisponibles) { colorPair ->
-                            val (nombreColor, color) = colorPair
-                            Box(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .background(
-                                        color,
-                                        RoundedCornerShape(8.dp)
-                                    )
-                                    .then(
-                                        if (colorSeleccionado == nombreColor) {
-                                            Modifier.border(
-                                                3.dp,
-                                                MaterialTheme.colorScheme.primary,
-                                                RoundedCornerShape(8.dp)
-                                            )
-                                        } else {
-                                            Modifier
-                                        }
-                                    )
-                                    .clickable(
-                                        onClick = { viewModel.setColor(nombreColor) }
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (colorSeleccionado == nombreColor) {
-                                    Icon(
-                                        Icons.Default.Check,
-                                        contentDescription = null,
-                                        tint = Color.White
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    mensaje?.let {
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (it.contains("exitosamente")) {
-                                    MaterialTheme.colorScheme.primaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.errorContainer
-                                }
-                            )
+                        Button(
+                            onClick = { viewModel.guardarCategoria() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text(
-                                text = it,
-                                modifier = Modifier.padding(16.dp),
-                                color = if (it.contains("exitosamente")) {
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                                } else {
-                                    MaterialTheme.colorScheme.onErrorContainer
-                                }
-                            )
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Agregar Categoría")
                         }
-                    }
-
-                    Button(
-                        onClick = { viewModel.guardarCategoria() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Agregar Categoría", style = MaterialTheme.typography.titleMedium)
                     }
                 }
             }
 
-            // Lista de Categorías
-            Text(
-                text = "Categorías Existentes",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            item {
+                Text(
+                    text = "Categorías Existentes",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
             if (categorias.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            Icons.Default.Category,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = "No hay categorías",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Category,
+                                contentDescription = null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "No hay categorías",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(categorias) { categoria ->
-                        CategoryItem(
-                            categoria = categoria,
-                            onDelete = { viewModel.deleteCategoria(categoria) }
-                        )
-                    }
+                items(categorias) { categoria ->
+                    CategoryItem(
+                        categoria = categoria,
+                        onDelete = { viewModel.deleteCategoria(categoria) }
+                    )
                 }
             }
         }
@@ -324,21 +318,31 @@ val iconosDisponibles = listOf(
     "pets" to Icons.Default.Pets
 )
 
+// Más colores añadidos
 val coloresDisponibles = listOf(
     "#4CAF50" to Color(0xFF4CAF50),
-    "#2196F3" to Color(0xFF2196F3),
-    "#F44336" to Color(0xFFF44336),
-    "#FF9800" to Color(0xFFFF9800),
-    "#9C27B0" to Color(0xFF9C27B0),
-    "#009688" to Color(0xFF009688),
-    "#FFC107" to Color(0xFFFFC107),
-    "#3F51B5" to Color(0xFF3F51B5),
-    "#E91E63" to Color(0xFFE91E63),
-    "#00BCD4" to Color(0xFF00BCD4),
+    "#8BC34A" to Color(0xFF8BC34A),
     "#CDDC39" to Color(0xFFCDDC39),
+    "#FFEB3B" to Color(0xFFFFEB3B),
+    "#FFC107" to Color(0xFFFFC107),
+    "#FF9800" to Color(0xFFFF9800),
     "#FF5722" to Color(0xFFFF5722),
+    "#F44336" to Color(0xFFF44336),
+    "#E91E63" to Color(0xFFE91E63),
+    "#FFB6C1" to Color(0xFFFFB6C1),
+    "#9C27B0" to Color(0xFF9C27B0),
+    "#B39DDB" to Color(0xFFB39DDB),
+    "#3F51B5" to Color(0xFF3F51B5),
+    "#2196F3" to Color(0xFF2196F3),
+    "#00BCD4" to Color(0xFF00BCD4),
+    "#00E5FF" to Color(0xFF00E5FF),
+    "#009688" to Color(0xFF009688),
+    "#607D8B" to Color(0xFF607D8B),
     "#795548" to Color(0xFF795548),
     "#9E9E9E" to Color(0xFF9E9E9E),
-    "#607D8B" to Color(0xFF607D8B)
-).map { it.first to it.second }
-
+    "#000000" to Color(0xFF000000),
+    "#FFFFFF" to Color(0xFFFFFFFF),
+    "#FFA726" to Color(0xFFFFA726),
+    "#C0CA33" to Color(0xFFC0CA33),
+    "#00C853" to Color(0xFF00C853)
+)
