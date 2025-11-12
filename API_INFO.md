@@ -20,3 +20,5 @@ La API se utiliza para mostrar tasas de cambio en la aplicación. El `ExchangeRa
 ### Nota:
 Si la API no está disponible, la aplicación usa valores aproximados como fallback para mantener la funcionalidad.
 
+
+

@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.ui)
     kapt(libs.androidx.room.compiler)
     
     // ViewModel
